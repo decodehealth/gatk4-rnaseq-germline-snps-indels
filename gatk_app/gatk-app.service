@@ -1,0 +1,13 @@
+[Unit]
+Description=Service to auto start gunicorn servers to run gatk_app flask app
+After=network.target
+
+[Service]
+User=azureuser
+Group=www-data
+WorkingDirectory=/gatk-app/
+Environment="PATH=/gatk-app/gatk-appEnv/bin"
+ExecStart=/gatk-app/gatk-appEnv/bin/gunicorn --workers 3 --bind 0.0.0.0:5010 -m 007 wsgi:app --log-level debug
+
+[Install]
+WantedBy=multi-user.target
