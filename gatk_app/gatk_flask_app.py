@@ -45,7 +45,7 @@ def run_gatk_splitncigar():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/lib/gatk/gatk SplitNCigarReads -R {path_to_dict_fa} -I {path_to_deduped_bam} -O {path_to_split_bam}"
+      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar SplitNCigarReads -R {path_to_dict_fa} -I {path_to_deduped_bam} -O {path_to_split_bam}"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
@@ -65,7 +65,7 @@ def run_gatk_labelread():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"java -jar /mnt/iquityazurefileshare1/IQuity/GATK_Testing/gatk-workflows/picard.jar AddOrReplaceReadGroups I= {path_to_split_bam} O= {path_to_labeled_bam} RGPL=illumina RGPU=unit1 RGLB=lib1 RGSM={sample_name} RGID=1	"
+      f"/usr/bin/java -jar /mnt/iquityazurefileshare1/IQuity/GATK_Testing/gatk-workflows/picard.jar AddOrReplaceReadGroups I= {path_to_split_bam} O= {path_to_labeled_bam} RGPL=illumina RGPU=unit1 RGLB=lib1 RGSM={sample_name} RGID=1	"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
@@ -85,7 +85,7 @@ def run_gatk_baserecal():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/lib/gatk/gatk BaseRecalibrator -R {path_to_dict_fa} -I {path_to_labeled_bam} --use-original-qualities -O {path_to_recal_csv} -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_clinically_associated.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_phenotype_associated.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_somatic_incl_consequences.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_structural_variations.vcf"
+      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar BaseRecalibrator -R {path_to_dict_fa} -I {path_to_labeled_bam} --use-original-qualities -O {path_to_recal_csv} -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_clinically_associated.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_phenotype_associated.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_somatic_incl_consequences.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_structural_variations.vcf"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
@@ -106,7 +106,7 @@ def run_gatk_bqsr():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/lib/gatk/gatk  ApplyBQSR --add-output-sam-program-record  -R {path_to_dict_fa} -I {path_to_labeled_bam} --use-original-qualities -O {path_to_recaled_bam} --bqsr-recal-file {path_to_recal_csv}"
+      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar ApplyBQSR --add-output-sam-program-record  -R {path_to_dict_fa} -I {path_to_labeled_bam} --use-original-qualities -O {path_to_recaled_bam} --bqsr-recal-file {path_to_recal_csv}"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
@@ -126,7 +126,7 @@ def run_gatk_halotypecaller():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/lib/gatk/gatk --java-options '-Xms6000m -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10' HaplotypeCaller -R {path_to_dict_fa} -I {path_to_recaled_bam} -L /mnt/iquityazurefileshare1/GTFs/Homo_sapiens.GRCh38.104.gtf.exons.interval_list -O {path_to_vcf} -dont-use-soft-clipped-bases --standard-min-confidence-threshold-for-calling 20"
+      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar --java-options '-Xms6000m -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10' HaplotypeCaller -R {path_to_dict_fa} -I {path_to_recaled_bam} -L /mnt/iquityazurefileshare1/GTFs/Homo_sapiens.GRCh38.104.gtf.exons.interval_list -O {path_to_vcf} -dont-use-soft-clipped-bases --standard-min-confidence-threshold-for-calling 20"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
@@ -149,7 +149,7 @@ def run_gatk_variantfiltration():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/lib/gatk/gatk VariantFiltration --R {path_to_dict_fa} --V {path_to_vcf} --window 35 --cluster 3 --filter-name 'FS' --filter 'FS>30.0' --filter-name 'QD' --filter 'QD<2.0' -O {path_to_filtered_vcf}"
+      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar VariantFiltration --R {path_to_dict_fa} --V {path_to_vcf} --window 35 --cluster 3 --filter-name 'FS' --filter 'FS>30.0' --filter-name 'QD' --filter 'QD<2.0' -O {path_to_filtered_vcf}"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
