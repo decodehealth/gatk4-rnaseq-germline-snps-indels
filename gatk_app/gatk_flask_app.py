@@ -143,7 +143,7 @@ def run_gatk_variantfiltration():
     ## get vals
     path_to_vcf = rjson["path_to_vcf"]
     path_to_dict_fa = rjson["path_to_dict_fa"]
-    path_to_filtered_vcf = rjson["path_to_filtered_vcf]
+    path_to_filtered_vcf = rjson["path_to_filtered_vcf"]
     path_to_log = rjson["log_path"]
     
     log = open(path_to_log, "w")
