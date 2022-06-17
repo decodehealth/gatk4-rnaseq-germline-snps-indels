@@ -1,4 +1,4 @@
-from gatk_app_flask_app import app
+from gatk_flask_app import app
 
 if __name__== "__main__":
     app.run()
