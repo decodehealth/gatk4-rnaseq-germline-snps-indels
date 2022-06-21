@@ -45,7 +45,7 @@ def run_gatk_splitncigar():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar SplitNCigarReads -R {path_to_dict_fa} -I {path_to_deduped_bam} -O {path_to_split_bam}"
+      f"/usr/lib/gatk/gatk SplitNCigarReads -R {path_to_dict_fa} -I {path_to_deduped_bam} -O {path_to_split_bam}"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
