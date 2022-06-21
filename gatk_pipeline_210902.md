@@ -85,6 +85,7 @@ Note: This only needs to be run once for a given set of reference files (e.g. GT
 		--VALIDATION_STRINGENCY SILENT \
 		--METRICS_FILE /mnt/iquityazurefileshare1/IQuity/GATK_Testing/210830_Testing/2343-TA-1_DUP.metrics		
 
+JG time estimate: <5min
 ------
 ## Run SplitNCigar ✅
 	/usr/lib/gatk/gatk \
@@ -93,7 +94,7 @@ Note: This only needs to be run once for a given set of reference files (e.g. GT
 		-I /mnt/iquityazurefileshare1/IQuity/GATK_Testing/210830_Testing/2343-TA-1_Aligned.dedupped.bam  \
 		-O /mnt/iquityazurefileshare1/IQuity/GATK_Testing/210830_Testing/2343-TA-1_Aligned.dedupped.split.bam
 	
-
+JG time estimate: 5-10min
 ------
 ## Label read1 groups ✅
 	java -jar /mnt/iquityazurefileshare1/IQuity/GATK_Testing/gatk-workflows/picard.jar \
@@ -106,6 +107,7 @@ Note: This only needs to be run once for a given set of reference files (e.g. GT
 		RGSM=2343-TA-1 \
 		RGID=1	
 
+JG time estimate: 5-10min
 ------				
 ## Run BaseRecalibrator ✅
 	/usr/lib/gatk/gatk \
@@ -125,6 +127,7 @@ Note: This only needs to be run once for a given set of reference files (e.g. GT
     -known-sites /mnt/iquityazurefileshare1/IQuity/GATK_Testing/gatk-workflows/inputs/Homo_sapiens_assembly19_1000genomes_decoy/Mills_and_1000G_gold_standard.indels.b37.sites.vcf \
 		-known-sites /mnt/iquityazurefileshare1/IQuity/GATK_Testing/gatk-workflows/inputs/Homo_sapiens_assembly19_1000genomes_decoy/Homo_sapiens_assembly19_1000genomes_decoy.known_indels.vcf \
 
+JG time estimate: 5-10min
 ------
 ## Run BQSR ✅
 	/usr/lib/gatk/gatk \
@@ -136,6 +139,7 @@ Note: This only needs to be run once for a given set of reference files (e.g. GT
     -O /mnt/iquityazurefileshare1/IQuity/GATK_Testing/210830_Testing/2343-TA-1_Aligned.dedupped.split.labeled.recal.bam  \
     --bqsr-recal-file /mnt/iquityazurefileshare1/IQuity/GATK_Testing/210830_Testing/2343-TA-1_recal_data.csv
 
+JG time estimate: <5min
 ------
 ## HaplotypeCaller ✅
 	/usr/lib/gatk/gatk --java-options "-Xms6000m -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10" \
@@ -150,6 +154,7 @@ Note: This only needs to be run once for a given set of reference files (e.g. GT
 	## optional --dbsnp flag
 		--dbsnp /mnt/iquityazurefileshare1/IQuity/GATK_Testing/gatk-workflows/inputs/Homo_sapiens_assembly19_1000genomes_decoy/Homo_sapiens_assembly19_1000genomes_decoy.dbsnp138.vcf	
 
+JG time estimate: 5-10min?
 ------
 ## VariantFiltration ✅
 	/usr/lib/gatk/gatk \
@@ -163,3 +168,6 @@ Note: This only needs to be run once for a given set of reference files (e.g. GT
 		--filter-name "QD" \
 		--filter "QD<2.0" \
 		-O /mnt/iquityazurefileshare1/IQuity/GATK_Testing/210830_Testing/2343-TA-1.haplo.variant_filtered.vcf.gz
+		
+**JG time estimate: 5-10min?**
+
