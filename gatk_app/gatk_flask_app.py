@@ -45,7 +45,7 @@ def run_gatk_splitncigar():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/lib/gatk/gatk SplitNCigarReads -R {path_to_dict_fa} -I {path_to_deduped_bam} -O {path_to_split_bam}"
+      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar SplitNCigarReads -R {path_to_dict_fa} -I {path_to_deduped_bam} -O {path_to_split_bam}"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
@@ -126,7 +126,7 @@ def run_gatk_halotypecaller():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar --java-options '-Xms6000m -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10' HaplotypeCaller -R {path_to_dict_fa} -I {path_to_recaled_bam} -L /mnt/iquityazurefileshare1/GTFs/Homo_sapiens.GRCh38.104.gtf.exons.interval_list -O {path_to_vcf} -dont-use-soft-clipped-bases --standard-min-confidence-threshold-for-calling 20"
+      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar HaplotypeCaller -R {path_to_dict_fa} -I {path_to_recaled_bam} -L /mnt/iquityazurefileshare1/GTFs/Homo_sapiens.GRCh38.104.gtf.exons.interval_list -O {path_to_vcf} -dont-use-soft-clipped-bases --standard-min-confidence-threshold-for-calling 20"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
