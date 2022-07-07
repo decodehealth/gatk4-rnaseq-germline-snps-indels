@@ -45,7 +45,7 @@ def run_gatk_splitncigar():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar SplitNCigarReads -R {path_to_dict_fa} -I {path_to_deduped_bam} -O {path_to_split_bam}"
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar SplitNCigarReads -R {path_to_dict_fa} -I {path_to_deduped_bam} -O {path_to_split_bam}"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
@@ -85,7 +85,7 @@ def run_gatk_baserecal():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar BaseRecalibrator -R {path_to_dict_fa} -I {path_to_labeled_bam} --use-original-qualities -O {path_to_recal_csv} -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_clinically_associated.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_phenotype_associated.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_somatic_incl_consequences.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_structural_variations.vcf"
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar BaseRecalibrator -R {path_to_dict_fa} -I {path_to_labeled_bam} --use-original-qualities -O {path_to_recal_csv} -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_clinically_associated.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_phenotype_associated.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_somatic_incl_consequences.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_structural_variations.vcf"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
@@ -106,7 +106,7 @@ def run_gatk_bqsr():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar ApplyBQSR --add-output-sam-program-record  -R {path_to_dict_fa} -I {path_to_labeled_bam} --use-original-qualities -O {path_to_recaled_bam} --bqsr-recal-file {path_to_recal_csv}"
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar ApplyBQSR --add-output-sam-program-record  -R {path_to_dict_fa} -I {path_to_labeled_bam} --use-original-qualities -O {path_to_recaled_bam} --bqsr-recal-file {path_to_recal_csv}"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
@@ -126,7 +126,7 @@ def run_gatk_halotypecaller():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar HaplotypeCaller -R {path_to_dict_fa} -I {path_to_recaled_bam} -L /mnt/iquityazurefileshare1/GTFs/Homo_sapiens.GRCh38.104.gtf.exons.interval_list -O {path_to_vcf} -dont-use-soft-clipped-bases --standard-min-confidence-threshold-for-calling 20"
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar HaplotypeCaller -R {path_to_dict_fa} -I {path_to_recaled_bam} -L /mnt/iquityazurefileshare1/GTFs/Homo_sapiens.GRCh38.104.gtf.exons.interval_list -O {path_to_vcf} -dont-use-soft-clipped-bases --standard-min-confidence-threshold-for-calling 20"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
@@ -136,6 +136,28 @@ def run_gatk_halotypecaller():
 
 ## optional --dbsnp flag
 ##	--dbsnp /mnt/iquityazurefileshare1/IQuity/GATK_Testing/gatk-workflows/inputs/Homo_sapiens_assembly19_1000genomes_decoy/Homo_sapiens_assembly19_1000genomes_decoy.dbsnp138.vcf	
+
+
+@app.route("/run_gatk_selectvariants", methods=["POST"])
+def run_gatk_selectvariants():
+    rjson = request.get_json()
+    ## get vals
+    path_to_vcf = rjson["path_to_vcf"]
+    path_to_dict_fa = rjson["path_to_dict_fa"]
+    path_to_selected_vcf = rjson["path_to_selected_vcf"]
+    str_selected_variant_type = rjson["select_variant_type"] #'SNP' or 'indel'
+    path_to_log = rjson["log_path"]
+    
+    log = open(path_to_log, "w")
+    
+    cmd = (
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar SelectVariants --R {path_to_dict_fa} --V {path_to_vcf} -select-type {str_selected_variant_type}  -O {path_to_selected_vcf}"
+      )
+    
+    proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
+    
+    log.flush()
+    return str(proc.pid + 1)
 
 @app.route("/run_gatk_variantfiltration", methods=["POST"])
 def run_gatk_variantfiltration():
@@ -149,7 +171,7 @@ def run_gatk_variantfiltration():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar VariantFiltration --R {path_to_dict_fa} --V {path_to_vcf} --window 35 --cluster 3 --filter-name 'FS' --filter 'FS>30.0' --filter-name 'QD' --filter 'QD<2.0' -O {path_to_filtered_vcf}"
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar VariantFiltration --R {path_to_dict_fa} --V {path_to_vcf} --window 35 --cluster 3 --filter-name 'FS' --filter 'FS>30.0' --filter-name 'QD' --filter 'QD<2.0' -O {path_to_filtered_vcf}"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
