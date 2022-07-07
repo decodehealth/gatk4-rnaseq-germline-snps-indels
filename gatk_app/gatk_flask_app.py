@@ -23,7 +23,7 @@ def run_gatk_mark_dupes():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/build/libs/gatk-package-4.2.2.0-SNAPSHOT-local.jar  MarkDuplicates "
+      f"/usr/lib/gatk/gatk MarkDuplicates "
       f"--INPUT {path_to_input_bam}	--OUTPUT {path_to_output_bam} --CREATE_INDEX {bool_create_index} "
       f"--VALIDATION_STRINGENCY {str_validation_stringency} --METRICS_FILE {path_to_metrics_file}"
       )
