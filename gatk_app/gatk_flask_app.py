@@ -114,6 +114,26 @@ def run_gatk_bqsr():
     log.flush()
     return str(proc.pid + 1)
 
+@app.route("/run_gatk_analyzecov", methods=["POST"])
+def run_gatk_analyzecov():
+    rjson = request.get_json()
+    ## get vals
+    path_to_recal_csv = rjson["path_to_recal_csv"]
+    path_to_cov_pdf = rjson["path_to_cov_pdf"]
+    path_to_log = rjson["log_path"]
+    
+    log = open(path_to_log, "w")
+    
+    cmd = (
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar AnalyzeCovariates -before {path_to_recal_csv} -plots {path_to_cov_pdf}"
+    )
+    
+    proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
+    
+    log.flush()
+    return str(proc.pid + 1)  
+
+  
 @app.route("/run_gatk_halotypecaller", methods=["POST"])
 def run_gatk_halotypecaller():
     rjson = request.get_json()
