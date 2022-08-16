@@ -14,8 +14,7 @@ def run_gatk_mark_dupes():
     rjson = request.get_json()
     ## get vals
     path_to_input_bam = rjson["input_bam_path"]
-    path_to_output_bam = rjson["output_bam_path"]
-    bool_create_index = rjson["create_index_bool"]
+    path_to_deduped_bam = rjson["path_to_deduped_bam"]
     str_validation_stringency = rjson["validation_stringency_str"]
     path_to_metrics_file = rjson["metrics_file_path"]
     path_to_log = rjson["log_path"]
@@ -24,7 +23,7 @@ def run_gatk_mark_dupes():
     
     cmd = (
       f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar MarkDuplicates "
-      f"--INPUT {path_to_input_bam}	--OUTPUT {path_to_output_bam} --CREATE_INDEX {bool_create_index} "
+      f"--INPUT {path_to_input_bam}	--OUTPUT {path_to_deduped_bam} --CREATE_INDEX true "
       f"--VALIDATION_STRINGENCY {str_validation_stringency} --METRICS_FILE {path_to_metrics_file}"
       )
     
@@ -78,14 +77,14 @@ def run_gatk_baserecal():
     rjson = request.get_json()
     ## get vals
     path_to_dict_fa = rjson["path_to_dict_fa"]
-    path_to_labeled_bam = rjson["path_to_labeled_bam"]
-    path_to_recal_csv = rjson["path_to_recal_csv"]
+    path_to_bam = rjson["path_to_bam"]
+    path_to_csv = rjson["path_to_csv"]
     path_to_log = rjson["log_path"]
     
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar BaseRecalibrator -R {path_to_dict_fa} -I {path_to_labeled_bam} --use-original-qualities -O {path_to_recal_csv} -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_clinically_associated.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_phenotype_associated.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_somatic_incl_consequences.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_structural_variations.vcf"
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar BaseRecalibrator -R {path_to_dict_fa} -I {path_to_bam} --use-original-qualities -O {path_to_csv} -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_clinically_associated.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_phenotype_associated.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_somatic_incl_consequences.vcf -known-sites /mnt/iquityazurefileshare1/GTFs/SNPs/homo_sapiens_structural_variations.vcf"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
@@ -100,13 +99,13 @@ def run_gatk_bqsr():
     path_to_dict_fa = rjson["path_to_dict_fa"]
     path_to_labeled_bam = rjson["path_to_labeled_bam"]
     path_to_recaled_bam = rjson["path_to_recaled_bam"]
-    path_to_recal_csv = rjson["path_to_recal_csv"]
+    path_to_recaled_csv = rjson["path_to_recaled_csv"]
     path_to_log = rjson["log_path"]
       
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar ApplyBQSR --add-output-sam-program-record  -R {path_to_dict_fa} -I {path_to_labeled_bam} --use-original-qualities -O {path_to_recaled_bam} --bqsr-recal-file {path_to_recal_csv}"
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar ApplyBQSR --add-output-sam-program-record  -R {path_to_dict_fa} -I {path_to_labeled_bam} --use-original-qualities -O {path_to_recaled_bam} --bqsr-recal-file {path_to_recaled_csv}"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
@@ -118,14 +117,15 @@ def run_gatk_bqsr():
 def run_gatk_analyzecov():
     rjson = request.get_json()
     ## get vals
-    path_to_recal_csv = rjson["path_to_recal_csv"]
+    path_to_labeled_csv = rjson["path_to_labeled_csv"]
+    path_to_recaled_csv = rjson["path_to_recaled_csv"]
     path_to_cov_pdf = rjson["path_to_cov_pdf"]
     path_to_log = rjson["log_path"]
     
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar AnalyzeCovariates -before {path_to_recal_csv} -plots {path_to_cov_pdf}"
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar AnalyzeCovariates -before {path_to_labeled_csv} -after {path_to_recaled_csv} -plots {path_to_cov_pdf}"
     )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
@@ -146,7 +146,7 @@ def run_gatk_halotypecaller():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar HaplotypeCaller -R {path_to_dict_fa} -I {path_to_recaled_bam} -L /mnt/iquityazurefileshare1/GTFs/Homo_sapiens.GRCh38.104.gtf.exons.interval_list -O {path_to_vcf} -dont-use-soft-clipped-bases --standard-min-confidence-threshold-for-calling 20"
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar HaplotypeCaller -R {path_to_dict_fa} -I {path_to_recaled_bam} -L /mnt/iquityazurefileshare1/GTFs/Homo_sapiens.GRCh38.104.gtf.exons.interval_list -O {path_to_vcf} -dont-use-soft-clipped-bases false --standard-min-confidence-threshold-for-calling 30"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
