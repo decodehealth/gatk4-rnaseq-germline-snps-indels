@@ -171,7 +171,7 @@ def run_gatk_selectvariants():
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar SelectVariants --R {path_to_dict_fa} --V {path_to_vcf} -select-type {select_variant_type}  -O {path_to_selected_vcf}"
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar SelectVariants -R {path_to_dict_fa} -V {path_to_vcf} -select-type {select_variant_type} -O {path_to_selected_vcf}"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
