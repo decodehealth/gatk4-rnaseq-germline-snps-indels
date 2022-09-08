@@ -124,12 +124,16 @@ def run_gatk_analyzecov():
     
     log = open(path_to_log, "w")
     
+    cmd = ("conda activate gatk")
+    
+    proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
+    log.flush()
+ 
     cmd = (
-      f"conda activate gatk /usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar AnalyzeCovariates -before {path_to_labeled_csv} -after {path_to_recaled_csv} -plots {path_to_cov_pdf}"
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar AnalyzeCovariates -before {path_to_labeled_csv} -after {path_to_recaled_csv} -plots {path_to_cov_pdf}"
     )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
-    
     log.flush()
     return str(proc.pid + 1)  
 
