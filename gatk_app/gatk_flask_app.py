@@ -169,13 +169,13 @@ def run_gatk_selectvariants():
     path_to_vcf = rjson["path_to_vcf"]
     path_to_dict_fa = rjson["path_to_dict_fa"]
     path_to_selected_vcf = rjson["path_to_selected_vcf"]
-#     str_selected_variant_type = rjson["select_variant_type"] #'SNP' or 'indel'
+    str_selected_variant_type = rjson["select_variant_type"] #'SNP' or 'indel'
     path_to_log = rjson["log_path"]
     
     log = open(path_to_log, "w")
     
     cmd = (
-      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar SelectVariants -R {path_to_dict_fa} -V {path_to_vcf} -select-type SNP -O {path_to_selected_vcf}"
+      f"/usr/bin/java -jar /usr/lib/gatk/gatk-package-4.2.6.1-local.jar SelectVariants -R {path_to_dict_fa} -V {path_to_vcf} -select-type {str_selected_variant_type} -O {path_to_selected_vcf}"
       )
     
     proc = subprocess.Popen(cmd, shell=True, stdout=log, stderr=log) 
